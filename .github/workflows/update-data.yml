@@ -1,0 +1,41 @@
+name: Atualizar dados Meta Ads
+
+on:
+  schedule:
+    - cron: "0 * * * *"        # de hora em hora (UTC)
+  workflow_dispatch:            # botão "Run workflow" manual
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Puxar Meta Ads e gerar data.json
+        env:
+          META_TOKEN: ${{ secrets.META_TOKEN }}
+          AD_ACCOUNT_ID: ${{ secrets.AD_ACCOUNT_ID }}
+        run: node scripts/fetch-meta.mjs
+
+      - name: Commit se houver mudança
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if [ -n "$(git status --porcelain data.json)" ]; then
+            git add data.json
+            git commit -m "chore: atualiza data.json ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+            git push
+          else
+            echo "Sem mudança nos dados."
+          fi
