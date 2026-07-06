@@ -5,7 +5,7 @@
   "client": "Ricardo Mello",
   "currency": "BRL",
   "tz": "America/Sao_Paulo",
-  "updated_at": "2026-07-06T14:00:00Z",
+  "updated_at": "2026-07-06T23:43:05.162Z",
   "seed": true,
   "default_period": "last_30d"
  },
@@ -143,7 +143,7 @@
     },
     {
      "id": "6953257853902",
-     "name": "13.04.26-AnuncioRica-02-Legendado",
+     "name": "13.04.26-AnuncioRica-02-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 1320.72,
@@ -178,7 +178,7 @@
     },
     {
      "id": "6995287547702",
-     "name": "AD04-Lote1-Contabilidade",
+     "name": "AD04-19.06.26 - Lote 1 anuncios - Contabilidade",
      "campaign_id": "6988830922502",
      "status": "ACTIVE",
      "spend": 469.54,
@@ -200,7 +200,7 @@
     },
     {
      "id": "6997711944902",
-     "name": "AD01-Aulas-Vendas-1",
+     "name": "AD01-18.04.26 - Anuncios Aulas vendas - 1 — Cópia",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 383.67,
@@ -222,7 +222,7 @@
     },
     {
      "id": "6997713742702",
-     "name": "AD03-Aulas-Vendas-3",
+     "name": "AD03-18.04.26 - Anuncios Aulas vendas - 3",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 379.71,
@@ -244,7 +244,7 @@
     },
     {
      "id": "6996846460502",
-     "name": "AD01-ECT-ESTATICO1",
+     "name": "AD01-ECT-ESTÁTICO1",
      "campaign_id": "6996844867102",
      "status": "PAUSED",
      "spend": 302.47,
@@ -265,7 +265,7 @@
     },
     {
      "id": "6995280769502",
-     "name": "AD03-Lote1-Industria-3",
+     "name": "AD03-19.06.26 - Lote 1 anuncios - Industria 3",
      "campaign_id": "6988826092302",
      "status": "ACTIVE",
      "spend": 301.9,
@@ -287,7 +287,7 @@
     },
     {
      "id": "6996842271902",
-     "name": "AD01-EMPREGO-CARO-ECT",
+     "name": "AD01-EMPREGO-CARO",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 290,
@@ -308,7 +308,7 @@
     },
     {
      "id": "6996839373902",
-     "name": "AD01-CHINA1-ECT",
+     "name": "AD01-CHINA1",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 288.37,
@@ -330,7 +330,7 @@
     },
     {
      "id": "6996843203502",
-     "name": "AD02-CHINA2-ECT",
+     "name": "AD02-CHINA2",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 285.25,
@@ -352,7 +352,7 @@
     },
     {
      "id": "6996846087302",
-     "name": "AD02-ECT-ESTATICO2",
+     "name": "AD02-ECT-ESTÁTICO2",
      "campaign_id": "6996844867102",
      "status": "PAUSED",
      "spend": 269.8,
@@ -366,7 +366,7 @@
     },
     {
      "id": "6996838390502",
-     "name": "AD06-CHINA6-ECT",
+     "name": "AD06-CHINA6",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 269.28,
@@ -421,7 +421,7 @@
     },
     {
      "id": "6953262377102",
-     "name": "13.04.26-AnuncioRica-01-Legendado",
+     "name": "13.04.26-AnuncioRica-01-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 180.33,
@@ -443,7 +443,7 @@
     },
     {
      "id": "6988767297702",
-     "name": "AD06-CHINA6-mvp",
+     "name": "AD06-CHINA6",
      "campaign_id": "6988767139102",
      "status": "PAUSED",
      "spend": 138.23,
@@ -486,7 +486,7 @@
     },
     {
      "id": "6966594976902",
-     "name": "AD06-CHINA6-LowTicket",
+     "name": "AD06-CHINA6",
      "campaign_id": "6966594975302",
      "status": "PAUSED",
      "spend": 126.38,
@@ -507,7 +507,7 @@
     },
     {
      "id": "6954252023502",
-     "name": "AD04-TIME-NAO-PERFORMA",
+     "name": "AD04-TIME-NÃO-PERFORMA",
      "campaign_id": "6954222927702",
      "status": "ACTIVE",
      "spend": 77.64,
@@ -528,7 +528,7 @@
     },
     {
      "id": "6994023342902",
-     "name": "AD01-CHINA1-Checkout",
+     "name": "AD01-CHINA1",
      "campaign_id": "6994023339702",
      "status": "PAUSED",
      "spend": 37.71,
@@ -549,7 +549,7 @@
     },
     {
      "id": "6995231145502",
-     "name": "AD06-Aulas-Vendas-6-Checkout",
+     "name": "AD06-18.04.26 - Anuncios Aulas vendas - 6",
      "campaign_id": "6995195828702",
      "status": "PAUSED",
      "spend": 34.58,
@@ -591,7 +591,7 @@
     },
     {
      "id": "6995287547102",
-     "name": "AD03-Lote1-Loja",
+     "name": "AD03-19.06.26 - Lote 1 anuncios - Loja",
      "campaign_id": "6988830922502",
      "status": "ACTIVE",
      "spend": 20.4,
@@ -634,7 +634,7 @@
     },
     {
      "id": "6994041368502",
-     "name": "AD06-CHINA6-HotMvp",
+     "name": "AD06-CHINA6",
      "campaign_id": "6994041367102",
      "status": "PAUSED",
      "spend": 18.34,
@@ -659,7 +659,7 @@
    "ads": [
     {
      "id": "6953257853902",
-     "name": "13.04.26-AnuncioRica-02-Legendado",
+     "name": "13.04.26-AnuncioRica-02-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 340.58,
@@ -703,7 +703,7 @@
     },
     {
      "id": "6995287547702",
-     "name": "AD04-Lote1-Contabilidade",
+     "name": "AD04-19.06.26 - Lote 1 anuncios - Contabilidade",
      "campaign_id": "6988830922502",
      "status": "ACTIVE",
      "spend": 298.4,
@@ -725,7 +725,7 @@
     },
     {
      "id": "6997713742702",
-     "name": "AD03-Aulas-Vendas-3",
+     "name": "AD03-18.04.26 - Anuncios Aulas vendas - 3",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 267.56,
@@ -747,7 +747,7 @@
     },
     {
      "id": "6997711944902",
-     "name": "AD01-Aulas-Vendas-1",
+     "name": "AD01-18.04.26 - Anuncios Aulas vendas - 1 — Cópia",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 265.33,
@@ -769,7 +769,7 @@
     },
     {
      "id": "6995280769502",
-     "name": "AD03-Lote1-Industria-3",
+     "name": "AD03-19.06.26 - Lote 1 anuncios - Industria 3",
      "campaign_id": "6988826092302",
      "status": "ACTIVE",
      "spend": 252.85,
@@ -791,7 +791,7 @@
     },
     {
      "id": "6996846460502",
-     "name": "AD01-ECT-ESTATICO1",
+     "name": "AD01-ECT-ESTÁTICO1",
      "campaign_id": "6996844867102",
      "status": "PAUSED",
      "spend": 141.72,
@@ -804,7 +804,7 @@
     },
     {
      "id": "6996839373902",
-     "name": "AD01-CHINA1-ECT",
+     "name": "AD01-CHINA1",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 134.01,
@@ -825,7 +825,7 @@
     },
     {
      "id": "6996843203502",
-     "name": "AD02-CHINA2-ECT",
+     "name": "AD02-CHINA2",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 130.64,
@@ -847,7 +847,7 @@
     },
     {
      "id": "6996842271902",
-     "name": "AD01-EMPREGO-CARO-ECT",
+     "name": "AD01-EMPREGO-CARO",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 126.52,
@@ -868,7 +868,7 @@
     },
     {
      "id": "6996838390502",
-     "name": "AD06-CHINA6-ECT",
+     "name": "AD06-CHINA6",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 117.99,
@@ -889,7 +889,7 @@
     },
     {
      "id": "6996846087302",
-     "name": "AD02-ECT-ESTATICO2",
+     "name": "AD02-ECT-ESTÁTICO2",
      "campaign_id": "6996844867102",
      "status": "PAUSED",
      "spend": 112.82,
@@ -940,7 +940,7 @@
    "ads": [
     {
      "id": "6995287547702",
-     "name": "AD04-Lote1-Contabilidade",
+     "name": "AD04-19.06.26 - Lote 1 anuncios - Contabilidade",
      "campaign_id": "6988830922502",
      "status": "ACTIVE",
      "spend": 63.48,
@@ -961,7 +961,7 @@
     },
     {
      "id": "6995280769502",
-     "name": "AD03-Lote1-Industria-3",
+     "name": "AD03-19.06.26 - Lote 1 anuncios - Industria 3",
      "campaign_id": "6988826092302",
      "status": "ACTIVE",
      "spend": 59.05,
@@ -983,7 +983,7 @@
     },
     {
      "id": "6953257853902",
-     "name": "13.04.26-AnuncioRica-02-Legendado",
+     "name": "13.04.26-AnuncioRica-02-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 53.51,
@@ -1004,7 +1004,7 @@
     },
     {
      "id": "6997711944902",
-     "name": "AD01-Aulas-Vendas-1",
+     "name": "AD01-18.04.26 - Anuncios Aulas vendas - 1 — Cópia",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 51.47,
@@ -1047,7 +1047,7 @@
     },
     {
      "id": "6997713742702",
-     "name": "AD03-Aulas-Vendas-3",
+     "name": "AD03-18.04.26 - Anuncios Aulas vendas - 3",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 47.93,
@@ -1089,7 +1089,7 @@
     },
     {
      "id": "6953262613702",
-     "name": "23.04.26-Depoimentos-v01",
+     "name": "23.04.26-Depoimentos-anuncio-v01",
      "campaign_id": "6953262613902",
      "status": "ACTIVE",
      "spend": 5.74,
@@ -1131,7 +1131,7 @@
     },
     {
      "id": "6953262377102",
-     "name": "13.04.26-AnuncioRica-01-Legendado",
+     "name": "13.04.26-AnuncioRica-01-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 1.93,
@@ -1192,7 +1192,7 @@
    "ads": [
     {
      "id": "6997713742702",
-     "name": "AD03-Aulas-Vendas-3",
+     "name": "AD03-18.04.26 - Anuncios Aulas vendas - 3",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 59.35,
@@ -1213,7 +1213,7 @@
     },
     {
      "id": "6997711944902",
-     "name": "AD01-Aulas-Vendas-1",
+     "name": "AD01-18.04.26 - Anuncios Aulas vendas - 1 — Cópia",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 53.69,
@@ -1234,7 +1234,7 @@
     },
     {
      "id": "6995280769502",
-     "name": "AD03-Lote1-Industria-3",
+     "name": "AD03-19.06.26 - Lote 1 anuncios - Industria 3",
      "campaign_id": "6988826092302",
      "status": "ACTIVE",
      "spend": 51.06,
@@ -1254,7 +1254,7 @@
     },
     {
      "id": "52504191700506",
-     "name": "EventoPresencial-ReformaTributaria",
+     "name": "EventoPresencial-ReformaTributaria-17-07-26",
      "campaign_id": "52504191700306",
      "status": "ACTIVE",
      "spend": 41.38,
@@ -1267,7 +1267,7 @@
     },
     {
      "id": "6953257853902",
-     "name": "13.04.26-AnuncioRica-02-Legendado",
+     "name": "13.04.26-AnuncioRica-02-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 38.51,
@@ -1288,7 +1288,7 @@
     },
     {
      "id": "6995287547702",
-     "name": "AD04-Lote1-Contabilidade",
+     "name": "AD04-19.06.26 - Lote 1 anuncios - Contabilidade",
      "campaign_id": "6988830922502",
      "status": "ACTIVE",
      "spend": 35.71,
@@ -1343,7 +1343,7 @@
     },
     {
      "id": "6953262613702",
-     "name": "23.04.26-Depoimentos-v01",
+     "name": "23.04.26-Depoimentos-anuncio-v01",
      "campaign_id": "6953262613902",
      "status": "ACTIVE",
      "spend": 8.08,
@@ -1385,7 +1385,7 @@
     },
     {
      "id": "6953262377102",
-     "name": "13.04.26-AnuncioRica-01-Legendado",
+     "name": "13.04.26-AnuncioRica-01-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 2.76,
@@ -1403,7 +1403,7 @@
     },
     {
      "id": "6954252023502",
-     "name": "AD04-TIME-NAO-PERFORMA",
+     "name": "AD04-TIME-NÃO-PERFORMA",
      "campaign_id": "6954222927702",
      "status": "ACTIVE",
      "spend": 2.43,
@@ -1449,7 +1449,7 @@
    "ads": [
     {
      "id": "6953257853902",
-     "name": "13.04.26-AnuncioRica-02-Legendado",
+     "name": "13.04.26-AnuncioRica-02-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 2625.12,
@@ -1475,7 +1475,7 @@
     },
     {
      "id": "6956561499102",
-     "name": "AD07-Nao-e-o-mercado",
+     "name": "AD07-Não-é-o-mercado",
      "campaign_id": "6956561496702",
      "status": "PAUSED",
      "spend": 1243.31,
@@ -1501,7 +1501,7 @@
     },
     {
      "id": "6966594976902",
-     "name": "AD06-CHINA6-LowTicket",
+     "name": "AD06-CHINA6",
      "campaign_id": "6966594975302",
      "status": "PAUSED",
      "spend": 789.77,
@@ -1527,7 +1527,7 @@
     },
     {
      "id": "6953262613702",
-     "name": "23.04.26-Depoimentos-v01",
+     "name": "23.04.26-Depoimentos-anuncio-v01",
      "campaign_id": "6953262613902",
      "status": "ACTIVE",
      "spend": 706.48,
@@ -1540,7 +1540,7 @@
     },
     {
      "id": "6953262377102",
-     "name": "13.04.26-AnuncioRica-01-Legendado",
+     "name": "13.04.26-AnuncioRica-01-Legendado-v02",
      "campaign_id": "6953257853702",
      "status": "ACTIVE",
      "spend": 530.79,
@@ -1566,7 +1566,7 @@
     },
     {
      "id": "6995287547702",
-     "name": "AD04-Lote1-Contabilidade",
+     "name": "AD04-19.06.26 - Lote 1 anuncios - Contabilidade",
      "campaign_id": "6988830922502",
      "status": "ACTIVE",
      "spend": 469.54,
@@ -1580,7 +1580,7 @@
     },
     {
      "id": "6997711944902",
-     "name": "AD01-Aulas-Vendas-1",
+     "name": "AD01-18.04.26 - Anuncios Aulas vendas - 1 — Cópia",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 383.67,
@@ -1594,7 +1594,7 @@
     },
     {
      "id": "6997713742702",
-     "name": "AD03-Aulas-Vendas-3",
+     "name": "AD03-18.04.26 - Anuncios Aulas vendas - 3",
      "campaign_id": "6997596512502",
      "status": "ACTIVE",
      "spend": 379.71,
@@ -1620,7 +1620,7 @@
     },
     {
      "id": "6996846460502",
-     "name": "AD01-ECT-ESTATICO1",
+     "name": "AD01-ECT-ESTÁTICO1",
      "campaign_id": "6996844867102",
      "status": "PAUSED",
      "spend": 302.47,
@@ -1633,7 +1633,7 @@
     },
     {
      "id": "6995280769502",
-     "name": "AD03-Lote1-Industria-3",
+     "name": "AD03-19.06.26 - Lote 1 anuncios - Industria 3",
      "campaign_id": "6988826092302",
      "status": "ACTIVE",
      "spend": 301.9,
@@ -1647,7 +1647,7 @@
     },
     {
      "id": "6996842271902",
-     "name": "AD01-EMPREGO-CARO-ECT",
+     "name": "AD01-EMPREGO-CARO",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 290,
@@ -1660,7 +1660,7 @@
     },
     {
      "id": "6996839373902",
-     "name": "AD01-CHINA1-ECT",
+     "name": "AD01-CHINA1",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 288.37,
@@ -1674,7 +1674,7 @@
     },
     {
      "id": "6996843203502",
-     "name": "AD02-CHINA2-ECT",
+     "name": "AD02-CHINA2",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 285.25,
@@ -1688,7 +1688,7 @@
     },
     {
      "id": "6965097904702",
-     "name": "AD00-Misto-V2",
+     "name": "AD00-Misto",
      "campaign_id": "6965097903302",
      "status": "PAUSED",
      "spend": 270.18,
@@ -1701,7 +1701,7 @@
     },
     {
      "id": "6996846087302",
-     "name": "AD02-ECT-ESTATICO2",
+     "name": "AD02-ECT-ESTÁTICO2",
      "campaign_id": "6996844867102",
      "status": "PAUSED",
      "spend": 269.8,
@@ -1715,7 +1715,7 @@
     },
     {
      "id": "6996838390502",
-     "name": "AD06-CHINA6-ECT",
+     "name": "AD06-CHINA6",
      "campaign_id": "6996828267502",
      "status": "PAUSED",
      "spend": 269.28,
@@ -1741,7 +1741,7 @@
     },
     {
      "id": "6955935166502",
-     "name": "AD07-Nao-e-o-mercado-b",
+     "name": "AD07-Não-é-o-mercado",
      "campaign_id": "6955935166302",
      "status": "PAUSED",
      "spend": 195.99,
@@ -1780,7 +1780,7 @@
     },
     {
      "id": "6988767297702",
-     "name": "AD06-CHINA6-mvp",
+     "name": "AD06-CHINA6",
      "campaign_id": "6988767139102",
      "status": "PAUSED",
      "spend": 138.23,
@@ -1793,7 +1793,7 @@
     },
     {
      "id": "6961146505902",
-     "name": "AD07-TEMPO-ESCASSO-LowTicket",
+     "name": "AD07-TEMPO-ESCASSO",
      "campaign_id": "6961137176702",
      "status": "PAUSED",
      "spend": 124.05,

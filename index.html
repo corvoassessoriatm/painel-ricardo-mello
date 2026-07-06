@@ -175,7 +175,7 @@ function classify(cid){
   if(/EMPRESARIOCTEMPO|EMPRESARIO/.test(n))p="Empresário c/ Tempo";
   else if(/MANUALPME/.test(n))p="Manual PME";
   else if(/IMERSAO/.test(n))p="Imersão";
-  else if(/LOWTICKET/.test(n))p="Low Ticket";
+  else if(/LOWTICKET/.test(n))p="Empresário c/ Tempo";
   else if(/SEGUIDOR/.test(n))p="Perfil / Seguidores";
   else if(/EVENTO|REFORMATRIB/.test(n))p="Evento presencial";
   else if(/\bVV\b|INDUSTRIA/.test(n)&&b==="conteudo")p="Conteúdo Indústrias";
@@ -200,13 +200,14 @@ function agg(list){const t={spend:0,impr:0,reach:0,clicks:0,objV:0,leadN:0,fo:0,
   list.forEach(c=>{t.spend+=c.spend;t.impr+=c.impr;t.reach+=c.reach;t.clicks+=c.clicks;t.objV+=c.objV;t.leadN+=c.leadN;t.fo+=c.fo;t.pu+=((c.act&&c.act.pu)||0);});
   t.ctr=t.impr?t.clicks/t.impr*100:0;t.cpc=t.clicks?t.spend/t.clicks:0;t.cpm=t.impr?t.spend/t.impr*1000:0;t.freq=t.reach?t.impr/t.reach:0;return t;}
 
+function relTime(dt){const s=Math.max(0,(Date.now()-dt.getTime())/1000);if(s<90)return "agora";const m=Math.round(s/60);if(m<60)return "há "+m+" min";const h=Math.floor(m/60);if(h<48)return "há "+h+" h";return "há "+Math.round(h/24)+" d";}
 function boot(d){
   DATA=d; d.campaigns.forEach(c=>CMETA[c.id]=c);
   state.period=d.meta.default_period||"last_30d";
   document.getElementById("acc").textContent=d.meta.account_id;
   const dt=new Date(d.meta.updated_at);
-  const f=isNaN(dt)?d.meta.updated_at:dt.toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",hour12:true});
-  document.getElementById("upd").textContent=f+" (Brasília)"+(d.meta.seed?" · partida":"");
+  const abs=isNaN(dt)?d.meta.updated_at:dt.toLocaleString("pt-BR",{timeZone:"America/Sao_Paulo",day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit",hour12:true});
+  document.getElementById("upd").textContent=abs+" (Brasília) · "+(isNaN(dt)?"":relTime(dt))+(d.meta.seed?" · partida":"");
   render();
 }
 
@@ -377,7 +378,7 @@ function notes(){return `<div class="notes">
   <div class="row"><span>◆</span><span><b>Período.</b> Todo o painel (KPIs, campanhas, criativos, vídeo) responde ao período selecionado (hoje / ontem / 7 / 30 / 90 dias). A tendência mostra a série diária da conta na janela.</span></div>
   <div class="row"><span>◆</span><span><b>Objetivo pela nomenclatura</b> lido do nome da campanha; sem disparo relevante, cai para <b>CTR + gasto</b>. <b>★</b> marca o criativo de maior impacto. Criativos <b>pausados entram no topo</b> da lista.</span></div>
   <div class="row"><span>◆</span><span><b>Vídeo:</b> hook rate = reproduções de 3s ÷ impressões; retenção em 25/50/75/95% (contagens). <b>Seguidores</b> = follows/curtidas atribuídos aos anúncios.</span></div>
-  <div class="row"><span>◆</span><span><b>Low Ticket:</b> a tabela de nomes completos revela que "Low Ticket", "Empresário c/ Tempo" e "Manual PME" compartilham criativos (série CHINA/ECT) — útil para corrigir a nomenclatura. <b>Vendas faturadas e WhatsApp</b> virão do RD Station.</span></div>
+  <div class="row"><span>◆</span><span><b>Low Ticket</b> foi um erro de nomenclatura e está agrupado em <b>Empresário c/ Tempo</b> (o nome original permanece na tabela de campanhas). Criativos exibidos com o <b>nome exato</b> da Meta. <b>Vendas faturadas e WhatsApp</b> virão do RD Station.</span></div>
 </div>`;}
 const root=document.documentElement;
 document.getElementById("themeBtn").onclick=()=>{const c=root.getAttribute("data-theme")||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light");root.setAttribute("data-theme",c==="dark"?"light":"dark");if(DATA)renderTrend();};

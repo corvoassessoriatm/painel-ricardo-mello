@@ -28,21 +28,21 @@ const CAMP = {
   "6961137176702":{name:"COR-A-LOWTICKET-VENDAS-VD-COLD-BRASIL-2026-05-13",obj:"OUTCOME_SALES"},
 };
 
-// Nomes dos criativos (id -> nome do anúncio)
+// Nomes EXATOS dos criativos (id -> nome do anúncio, como consta na Meta)
 const AN = {
-  "6962180949302":"05.05.26-Depoimento1","6953257853902":"13.04.26-AnuncioRica-02-Legendado","6988826093302":"AD04-DESPERDICIO",
-  "6995287547702":"AD04-Lote1-Contabilidade","6997711944902":"AD01-Aulas-Vendas-1","6997713742702":"AD03-Aulas-Vendas-3",
-  "6996846460502":"AD01-ECT-ESTATICO1","6995280769502":"AD03-Lote1-Industria-3","6996842271902":"AD01-EMPREGO-CARO-ECT",
-  "6996839373902":"AD01-CHINA1-ECT","6996843203502":"AD02-CHINA2-ECT","6996846087302":"AD02-ECT-ESTATICO2",
-  "6996838390502":"AD06-CHINA6-ECT","6988830922902":"AD01-REFORMA-TRIBUTARIA","6954250543502":"AD03-MENTALIDADE",
-  "6953262377102":"13.04.26-AnuncioRica-01-Legendado","6988767297702":"AD06-CHINA6-mvp","6996844868502":"AD04-FATURAR-SEM-TEMPO",
-  "6966594976902":"AD06-CHINA6-LowTicket","6954252023502":"AD04-TIME-NAO-PERFORMA","6994023342902":"AD01-CHINA1-Checkout",
-  "6995231145502":"AD06-Aulas-Vendas-6-Checkout","6954222927902":"AD01-EMPREGO-CARO","6995287547102":"AD03-Lote1-Loja",
-  "6954232225502":"AD02-PROCESSO-DE-VENDAS","6994041368502":"AD06-CHINA6-HotMvp","6953262613702":"23.04.26-Depoimentos-v01",
+  "6962180949302":"05.05.26-Depoimento1","6953257853902":"13.04.26-AnuncioRica-02-Legendado-v02","6988826093302":"AD04-DESPERDICIO",
+  "6995287547702":"AD04-19.06.26 - Lote 1 anuncios - Contabilidade","6997711944902":"AD01-18.04.26 - Anuncios Aulas vendas - 1 — Cópia","6997713742702":"AD03-18.04.26 - Anuncios Aulas vendas - 3",
+  "6996846460502":"AD01-ECT-ESTÁTICO1","6995280769502":"AD03-19.06.26 - Lote 1 anuncios - Industria 3","6996842271902":"AD01-EMPREGO-CARO",
+  "6996839373902":"AD01-CHINA1","6996843203502":"AD02-CHINA2","6996846087302":"AD02-ECT-ESTÁTICO2",
+  "6996838390502":"AD06-CHINA6","6988830922902":"AD01-REFORMA-TRIBUTARIA","6954250543502":"AD03-MENTALIDADE",
+  "6953262377102":"13.04.26-AnuncioRica-01-Legendado-v02","6988767297702":"AD06-CHINA6","6996844868502":"AD04-FATURAR-SEM-TEMPO",
+  "6966594976902":"AD06-CHINA6","6954252023502":"AD04-TIME-NÃO-PERFORMA","6994023342902":"AD01-CHINA1",
+  "6995231145502":"AD06-18.04.26 - Anuncios Aulas vendas - 6","6954222927902":"AD01-EMPREGO-CARO","6995287547102":"AD03-19.06.26 - Lote 1 anuncios - Loja",
+  "6954232225502":"AD02-PROCESSO-DE-VENDAS","6994041368502":"AD06-CHINA6","6953262613702":"23.04.26-Depoimentos-anuncio-v01",
   "6962181859302":"05.05.26-Depoimento2","6962182367702":"05.05.26-Depoimento3","6961109265502":"AD05-EMPRESA-PARA",
-  "6956561499102":"AD07-Nao-e-o-mercado","6955935167702":"AD00-Misto","6955935166502":"AD07-Nao-e-o-mercado-b",
-  "6955935168702":"AD09-Procura-se","6965097904702":"AD00-Misto-V2","6961146505902":"AD07-TEMPO-ESCASSO-LowTicket",
-  "52504191700506":"EventoPresencial-ReformaTributaria",
+  "6956561499102":"AD07-Não-é-o-mercado","6955935167702":"AD00-Misto","6955935166502":"AD07-Não-é-o-mercado",
+  "6955935168702":"AD09-Procura-se","6965097904702":"AD00-Misto","6961146505902":"AD07-TEMPO-ESCASSO",
+  "52504191700506":"EventoPresencial-ReformaTributaria-17-07-26",
 };
 
 // Cada linha de criativo: [id, campaign_id, status, spend, impr, reach, clicks, act{}, vid{}]
@@ -174,7 +174,7 @@ const periods = {};
 for(const [k,arr] of Object.entries(P)) periods[k] = { ads: arr.map(toAd) };
 
 const data = {
-  meta:{account_id:"2895948854126435",account_name:"EXPONENTIAL NOVO 2025",client:"Ricardo Mello",currency:"BRL",tz:"America/Sao_Paulo",updated_at:"2026-07-06T14:00:00Z",seed:true,default_period:"last_30d"},
+  meta:{account_id:"2895948854126435",account_name:"EXPONENTIAL NOVO 2025",client:"Ricardo Mello",currency:"BRL",tz:"America/Sao_Paulo",updated_at:new Date().toISOString(),seed:true,default_period:"last_30d"},
   campaigns: Object.entries(CAMP).map(([id,c])=>({id,name:c.name,objective:c.obj})),
   periods,
   daily: DAILY,
