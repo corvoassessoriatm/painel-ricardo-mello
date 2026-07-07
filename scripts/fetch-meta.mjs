@@ -37,7 +37,7 @@ function pick(actions, types) {
 }
 const sumArr = a => Array.isArray(a) ? a.reduce((s, x) => s + num(x.value), 0) : num(a);
 
-const IF = "ad_id,ad_name,campaign_id,spend,impressions,reach,clicks,actions,video_thruplay_watched_actions,video_p25_watched_actions,video_p50_watched_actions,video_p75_watched_actions,video_p95_watched_actions";
+const IF = "ad_id,ad_name,adset_id,campaign_id,spend,impressions,reach,clicks,actions,video_thruplay_watched_actions,video_p25_watched_actions,video_p50_watched_actions,video_p75_watched_actions,video_p95_watched_actions";
 
 function toAct(r) {
   const a = r.actions || [];
@@ -65,17 +65,20 @@ function toVid(r) {
 async function main() {
   const campMeta = await getAll(`act_${ACCOUNT}/campaigns`, { fields: "id,name,objective,status,effective_status" });
   const adMeta = await getAll(`act_${ACCOUNT}/ads`, { fields: "id,effective_status" });
+  const adsetMeta = await getAll(`act_${ACCOUNT}/adsets`, { fields: "id,name" });
   const statusOf = Object.fromEntries(adMeta.map(a => [a.id, a.effective_status === "ACTIVE" ? "ACTIVE" : "PAUSED"]));
   const campById = Object.fromEntries(campMeta.map(c => [c.id, c]));
+  const adsetName = Object.fromEntries(adsetMeta.map(s => [s.id, s.name]));
 
   const periods = {};
-  const usedCamps = new Set();
+  const usedCamps = new Set(), usedAdsets = new Set();
   for (const preset of PRESETS) {
     const rows = await getAll(`act_${ACCOUNT}/insights`, { level: "ad", date_preset: preset, fields: IF });
     const list = rows.filter(r => parseFloat(r.spend) > 0).map(r => {
-      usedCamps.add(r.campaign_id);
+      usedCamps.add(r.campaign_id); if (r.adset_id) usedAdsets.add(r.adset_id);
       const ad = { id: r.ad_id, name: r.ad_name, campaign_id: r.campaign_id, status: statusOf[r.ad_id] || "PAUSED",
         spend: +(+r.spend).toFixed(2), impr: num(r.impressions), reach: num(r.reach), clicks: num(r.clicks), act: toAct(r) };
+      if (r.adset_id) ad.adset_id = r.adset_id;
       const v = toVid(r); if (v) ad.vid = v;
       return ad;
     }).sort((a, b) => b.spend - a.spend);
@@ -86,13 +89,14 @@ async function main() {
   const daily = dailyRows.map(r => ({ d: r.date_start, spend: +(+r.spend).toFixed(2), impr: num(r.impressions), clicks: num(r.clicks), reach: num(r.reach) }));
 
   const campaigns = [...usedCamps].filter(id => campById[id]).map(id => ({ id, name: campById[id].name, objective: campById[id].objective || "" }));
+  const adsets = [...usedAdsets].map(id => ({ id, name: adsetName[id] || id }));
 
   const data = {
-    meta: { account_id: ACCOUNT, account_name: campById[Object.keys(campById)[0]]?.name ? "EXPONENTIAL NOVO 2025" : "EXPONENTIAL NOVO 2025",
+    meta: { account_id: ACCOUNT, account_name: "EXPONENTIAL NOVO 2025",
       client: "Ricardo Mello", currency: "BRL", tz: "America/Sao_Paulo", updated_at: new Date().toISOString(), seed: false, default_period: "last_30d" },
-    campaigns, periods, daily,
+    campaigns, adsets, periods, daily,
   };
-  writeFileSync(OUT, JSON.stringify(data, null, 1) + "\n");
-  console.log("OK", PRESETS.map(p => p + "=" + periods[p].ads.length).join(" "), "| campaigns", campaigns.length, "| daily", daily.length);
+  writeFileSync(OUT, JSON.stringify(data) + "\n");
+  console.log("OK", PRESETS.map(p => p + "=" + periods[p].ads.length).join(" "), "| campaigns", campaigns.length, "| adsets", adsets.length, "| daily", daily.length);
 }
 main().catch(e => { console.error("FALHA:", e.message); process.exit(1); });
