@@ -289,7 +289,7 @@ function renderKPIs(t){
     {k:"Investimento",v:BRL0(t.spend),s:campaignsAgg(scoped(ads())).length+" campanhas"},
     objCard,
     {k:"Alcance",v:NUM(t.reach),s:NUM(t.impr)+" impr.",info:"Soma por campanha; há sobreposição de públicos."},
-    {k:"Seguidores",v:NUM(t.fo),s:"follows atribuídos",info:"Follows/seguidores atribuídos aos anúncios. Com o robô (API completa) entra o follow REAL do Instagram (onsite_conversion.follow); nesta amostra de partida usa curtidas de Página como proxy. Indicador de crescimento da C1 também aparece em Visitas ao perfil (1.783 em 90d)."},
+    {k:"Curtidas FB",v:NUM(t.fo),s:"curtidas de página",info:"Curtidas de Página do Facebook (like). CONFIRMADO na API: a Meta não atribui seguidor do Instagram a campanha de tráfego (nenhum dos 22 eventos da C1 é follow). O crescimento real de seguidores aparece em Visitas ao perfil; a contagem absoluta é métrica orgânica do Instagram, não do anúncio."},
     {k:"CTR",v:PCT(t.ctr),s:NUM(t.clicks)+" cliques"},
     {k:"CPC",v:BRL(t.cpc),s:"por clique"},
     {k:"CPM",v:BRL(t.cpm),s:"por mil impr."},
