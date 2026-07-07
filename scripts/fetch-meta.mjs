@@ -46,7 +46,7 @@ function toAct(r) {
     le: pick(a, ["lead", "onsite_conversion.lead_grouped", "offsite_conversion.fb_pixel_lead"]),
     ck: pick(a, ["omni_initiated_checkout", "initiate_checkout"]),
     ig: pick(a, ["onsite_conversion.ig_profile_visit", "onsite_conversion.ig_profile_engagement"]),
-    fo: pick(a, ["like", "onsite_conversion.follow"]),
+    fo: pick(a, ["onsite_conversion.follow", "onsite_conversion.page_follow", "follow", "like"]),
     lc: pick(a, ["link_click"]),
     tp: sumArr(r.video_thruplay_watched_actions),
   };

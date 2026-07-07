@@ -292,7 +292,7 @@ function renderKPIs(t){
     {k:"Investimento",v:BRL0(t.spend),s:campaignsAgg(scoped(ads())).length+" campanhas"},
     objCard,
     {k:"Alcance",v:NUM(t.reach),s:NUM(t.impr)+" impr.",info:"Soma por campanha; há sobreposição de públicos."},
-    {k:"Curtidas FB",v:NUM(t.fo),s:"follows de página (FB)",info:"Curtidas/follows de Página do Facebook (actions:like). A Meta NÃO atribui follows do Instagram a campanhas de tráfego — na aba Seguidores o indicador real de crescimento é Visitas ao perfil."},
+    {k:"Seguidores",v:NUM(t.fo),s:"follows atribuídos",info:"Follows/seguidores atribuídos aos anúncios. Com o robô (API completa) entra o follow REAL do Instagram (onsite_conversion.follow); nesta amostra de partida usa curtidas de Página como proxy. Indicador de crescimento da C1 também aparece em Visitas ao perfil (1.783 em 90d)."},
     {k:"CTR",v:PCT(t.ctr),s:NUM(t.clicks)+" cliques"},
     {k:"CPC",v:BRL(t.cpc),s:"por clique"},
     {k:"CPM",v:BRL(t.cpm),s:"por mil impr."},
@@ -379,8 +379,8 @@ function renderCrTable(list){
     if(rSort==="cname")return rDir*a.name.localeCompare(b.name);
     return rDir*(((a[rSort]==null?-1:a[rSort]))-((b[rSort]==null?-1:b[rSort])));});
   t.innerHTML=`<thead><tr>${cols.map(([k,l])=>`<th data-k="${k}" class="${rSort===k?"sorted":""}">${l}${rSort===k?(rDir<0?" ↓":" ↑"):""}</th>`).join("")}</tr></thead><tbody>${s.map(c=>{
-    const isB=c===best;const oc=c.objV>0?`${NUM(c.objV)} <span class="tag">${c.objLabel}</span>`:(state.action!=="geral"&&!useObj?PCT(c.ctr):(c.fo?NUM(c.fo)+' <span class="tag">curt. FB</span>':"—"));
-    return `<tr class="${isB?"best":""}"><td><div class="crn">${isB?'<span class="star">★</span>':""}${c.name}</div><span class="tag">${c.product}${c.fo?" · "+c.fo+" curt.":""}</span></td>
+    const isB=c===best;const oc=c.objV>0?`${NUM(c.objV)} <span class="tag">${c.objLabel}</span>`:(state.action!=="geral"&&!useObj?PCT(c.ctr):(c.fo?NUM(c.fo)+' <span class="tag">seg.</span>':"—"));
+    return `<tr class="${isB?"best":""}"><td><div class="crn">${isB?'<span class="star">★</span>':""}${c.name}</div><span class="tag">${c.product}${c.fo?" · "+c.fo+" seg.":""}</span></td>
       <td><span class="st ${c.status==="ACTIVE"?"on":"off"}">${c.status==="ACTIVE"?"ativo":"pausado"}</span></td>
       <td>${BRL(c.spend)}</td><td>${PCT(c.ctr)}</td><td>${BRL(c.cpc)}</td><td>${BRL(c.cpm)}</td>
       <td>${c.hook!=null?PCT(c.hook):"—"}</td><td>${oc}</td></tr>`;}).join("")}</tbody>`;
