@@ -48,6 +48,7 @@ function toAct(r) {
     ig: pick(a, ["onsite_conversion.ig_profile_visit", "onsite_conversion.ig_profile_engagement"]),
     fo: pick(a, ["onsite_conversion.follow", "onsite_conversion.page_follow", "follow", "like"]),
     lc: pick(a, ["link_click"]),
+    pv: pick(a, ["omni_landing_page_view", "landing_page_view"]),
     tp: sumArr(r.video_thruplay_watched_actions),
   };
   Object.keys(act).forEach(k => { if (!act[k]) delete act[k]; });

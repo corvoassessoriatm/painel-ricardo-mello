@@ -91,6 +91,16 @@
   .tt .d{color:var(--muted);font-size:10.5px;margin-bottom:2px}.tt .m{font-weight:650;font-size:13px;font-variant-numeric:tabular-nums}
   .grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
   .grid2 .panel{margin-bottom:0}
+  .funnel{display:flex;flex-direction:column;gap:3px;margin-top:6px}
+  .fstage{display:grid;grid-template-columns:132px 1fr 160px;align-items:center;gap:14px}
+  .fstage .flabel{font-size:13px;font-weight:650}
+  .ftrack{height:30px;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;overflow:hidden}
+  .ffill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-ink));border-radius:6px 7px 7px 6px;min-width:3px;transition:width .5s cubic-bezier(.2,.7,.3,1)}
+  .fright{text-align:right}
+  .fval{font-size:15px;font-weight:700;font-variant-numeric:tabular-nums}
+  .frate{display:block;font-size:10.5px;color:var(--muted)}
+  .fann{font-size:11px;color:var(--accent-ink);padding:1px 0 1px 146px;line-height:1.5}
+  .fann b{color:var(--ink)}
   .bar-row{display:grid;grid-template-columns:120px 1fr auto;align-items:center;gap:10px;margin-bottom:10px}
   .bar-row .lbl{font-size:11.5px;color:var(--ink-2);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .bar-track{height:19px;background:var(--surface-2);border-radius:5px;overflow:hidden;border:1px solid var(--border)}
@@ -229,6 +239,7 @@ function render(){
     </div>
     <div id="obj"></div>
     <div class="kpis" id="kpis"></div>
+    <div id="funnelWrap"></div>
     <div class="panel"><div class="phead"><div><h3>Tendência diária</h3><div class="psub" id="trendSub"></div></div><div class="miniseg" id="trendSeg"></div></div><div id="trend"></div></div>
     ${state.action==="geral"?`<div class="grid2">
       <div class="panel"><div class="phead"><div><h3>Gasto por ação</h3><div class="psub">Distribuição do investimento</div></div></div><div id="c1"></div></div>
@@ -238,7 +249,7 @@ function render(){
     <div id="vidwrap"></div>
     ${notes()}`;
   renderSeg();syncProd();renderPeriod();
-  renderObj(t);renderKPIs(t);
+  renderObj(t);renderKPIs(t);renderFunnel(A,cs);
   renderTrendSeg();renderTrend();
   if(state.action==="geral")renderOverviewCharts(A);
   renderLevelSeg(cs);
@@ -332,6 +343,37 @@ function renderOverviewCharts(A){
   bars("c1",BUCKETS.map(b=>({l:BKL[b],v:agg(A.filter(a=>a.bucket===b)).spend})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v),BRL0);
   const rows=[{l:"ThruPlays",v:A.reduce((s,a)=>s+(a.bucket==="conteudo"?a.objV:0),0)},{l:"Visitas perfil",v:A.reduce((s,a)=>s+(a.bucket==="seguidores"?a.objV:0),0)},{l:"Cliques (evento)",v:A.reduce((s,a)=>s+((a.act&&a.act.lc)||0),0)},{l:"Checkouts",v:A.reduce((s,a)=>s+((a.act&&a.act.ck)||0),0)},{l:"Leads",v:A.reduce((s,a)=>s+a.leadN,0)},{l:"Compras",v:A.reduce((s,a)=>s+((a.act&&a.act.pu)||0),0)}].filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
   bars("c2",rows,NUM);
+}
+// ===== funil de conversão (Vendas/Leads/WhatsApp/Tráfego — exclui Conteúdo e Seguidores) =====
+const CONV=["vendas","leads","whatsapp","trafego"];
+function renderFunnel(A,cs){
+  const w=document.getElementById("funnelWrap");
+  let list;
+  if(state.action==="geral") list=A.filter(a=>CONV.includes(a.bucket)&&(state.product==="all"||a.product===state.product));
+  else if(CONV.includes(state.action)) list=cs;
+  else { w.innerHTML=""; return; }
+  if(!list||!list.length){ w.innerHTML=""; return; }
+  const t={spend:0,impr:0,reach:0,clicks:0,lc:0,pv:0,ck:0,le:0,pu:0};
+  list.forEach(a=>{t.spend+=a.spend;t.impr+=a.impr;t.reach+=a.reach;t.clicks+=a.clicks;const x=a.act||{};t.lc+=x.lc||0;t.pv+=x.pv||0;t.ck+=x.ck||0;t.le+=x.le||0;t.pu+=x.pu||0;});
+  const cpm=t.impr?t.spend/t.impr*1000:0,ctr=t.impr?t.clicks/t.impr*100:0,cpc=t.clicks?t.spend/t.clicks:0,connect=t.lc?t.pv/t.lc*100:0;
+  const top=Math.max(t.reach,1), pctPrev=(v,p)=>p>0?v/p*100:0;
+  const bar=v=>`<div class="ftrack"><div class="ffill" style="width:${Math.max(v/top*100,1.2)}%"></div></div>`;
+  const stage=(l,v,rate)=>`<div class="fstage"><div class="flabel">${l}</div>${bar(v)}<div class="fright"><span class="fval">${NUM(v)}</span>${rate?`<span class="frate">${rate}</span>`:""}</div></div>`;
+  const ann=txt=>`<div class="fann">↓ ${txt}</div>`;
+  w.innerHTML=`<div class="panel">
+    <div class="phead"><div><h3>Funil de conversão</h3><div class="psub">${state.action==="geral"?"todas as campanhas de conversão":BKL[state.action]} · ${NUM(list.length)} anúncios · ${PERIODS.find(p=>p[0]===state.period)[1]}</div></div><div class="psub">Investido <b style="color:var(--ink)">${BRL0(t.spend)}</b></div></div>
+    <div class="funnel">
+      ${stage("Alcance",t.reach)}
+      ${ann(`CPM <b>${BRL(cpm)}</b> · CTR <b>${PCT(ctr)}</b> · CPC <b>${BRL(cpc)}</b>`)}
+      ${stage("Cliques no link",t.lc,`${PCT(pctPrev(t.lc,t.impr))} das impressões`)}
+      ${ann(`Connect rate (Page view ÷ cliques) <b>${PCT(connect)}</b>`)}
+      ${stage("Page view",t.pv,t.lc?PCT(pctPrev(t.pv,t.lc))+" dos cliques":"")}
+      ${stage("Checkout",t.ck,t.pv?PCT(pctPrev(t.ck,t.pv))+" das PV":"")}
+      ${stage("Lead",t.le,t.clicks?PCT(pctPrev(t.le,t.clicks))+" dos cliques":"")}
+      ${stage("Compra",t.pu,t.pu?BRL(t.spend/t.pu)+" / compra":"sem compra atribuída")}
+    </div>
+    <div class="psub" style="margin-top:8px">Page view depende do evento de <b>LP no pixel</b> (hoje sub-registrado) — por isso pode aparecer abaixo de Checkout. Vendas faturadas reais virão do RD Station.</div>
+  </div>`;
 }
 // ===== hierarquia estilo Gerenciador de Anúncios (abas: Campanhas / Conjuntos / Anúncios) =====
 const LEVELS=[["campaign","Campanhas"],["adset","Conjuntos"],["ad","Anúncios"]];
