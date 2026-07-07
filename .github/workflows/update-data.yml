@@ -32,9 +32,9 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          if [ -n "$(git status --porcelain data.json)" ]; then
-            git add data.json
-            git commit -m "chore: atualiza data.json ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+          git add data.json thumbs 2>/dev/null || git add data.json
+          if [ -n "$(git status --porcelain)" ]; then
+            git commit -m "chore: atualiza data.json + capas ($(date -u '+%Y-%m-%d %H:%M UTC'))"
             git push
           else
             echo "Sem mudança nos dados."

@@ -2,14 +2,16 @@
 // Rodado pelo GitHub Actions de hora em hora. Node 20+ (fetch global).
 // Env: META_TOKEN (obrigatória), AD_ACCOUNT_ID (opcional).
 
-import { writeFileSync } from "node:fs";
+import { writeFileSync, existsSync, mkdirSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname, join } from "node:path";
 
 const TOKEN = process.env.META_TOKEN;
 const ACCOUNT = process.env.AD_ACCOUNT_ID || "2895948854126435";
 const API = "https://graph.facebook.com/v21.0";
-const OUT = join(dirname(fileURLToPath(import.meta.url)), "..", "data.json");
+const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
+const OUT = join(ROOT, "data.json");
+const THUMBDIR = join(ROOT, "thumbs");
 const PRESETS = ["today", "yesterday", "last_7d", "last_30d", "last_90d"];
 
 if (!TOKEN) { console.error("ERRO: defina o secret META_TOKEN."); process.exit(1); }
@@ -65,18 +67,19 @@ function toVid(r) {
 
 async function main() {
   const campMeta = await getAll(`act_${ACCOUNT}/campaigns`, { fields: "id,name,objective,status,effective_status" });
-  const adMeta = await getAll(`act_${ACCOUNT}/ads`, { fields: "id,effective_status" });
+  const adMeta = await getAll(`act_${ACCOUNT}/ads`, { fields: "id,effective_status,creative{id}" });
   const adsetMeta = await getAll(`act_${ACCOUNT}/adsets`, { fields: "id,name" });
   const statusOf = Object.fromEntries(adMeta.map(a => [a.id, a.effective_status === "ACTIVE" ? "ACTIVE" : "PAUSED"]));
+  const creativeOf = Object.fromEntries(adMeta.filter(a => a.creative).map(a => [a.id, a.creative.id]));
   const campById = Object.fromEntries(campMeta.map(c => [c.id, c]));
   const adsetName = Object.fromEntries(adsetMeta.map(s => [s.id, s.name]));
 
   const periods = {};
-  const usedCamps = new Set(), usedAdsets = new Set();
+  const usedCamps = new Set(), usedAdsets = new Set(), usedAds = new Set();
   for (const preset of PRESETS) {
     const rows = await getAll(`act_${ACCOUNT}/insights`, { level: "ad", date_preset: preset, fields: IF });
     const list = rows.filter(r => parseFloat(r.spend) > 0).map(r => {
-      usedCamps.add(r.campaign_id); if (r.adset_id) usedAdsets.add(r.adset_id);
+      usedCamps.add(r.campaign_id); usedAds.add(r.ad_id); if (r.adset_id) usedAdsets.add(r.adset_id);
       const ad = { id: r.ad_id, name: r.ad_name, campaign_id: r.campaign_id, status: statusOf[r.ad_id] || "PAUSED",
         spend: +(+r.spend).toFixed(2), impr: num(r.impressions), reach: num(r.reach), clicks: num(r.clicks), act: toAct(r) };
       if (r.adset_id) ad.adset_id = r.adset_id;
@@ -88,6 +91,24 @@ async function main() {
 
   const dailyRows = await getAll(`act_${ACCOUNT}/insights`, { level: "account", time_increment: "1", date_preset: "last_90d", fields: "spend,impressions,clicks,reach" });
   const daily = dailyRows.map(r => ({ d: r.date_start, spend: +(+r.spend).toFixed(2), impr: num(r.impressions), clicks: num(r.clicks), reach: num(r.reach) }));
+
+  // capas dos criativos: baixa 400px p/ thumbs/<ad_id>.jpg (pula se já existe)
+  let baixadas = 0;
+  const imgMap = {};
+  for (const adId of usedAds) {
+    const file = join(THUMBDIR, adId + ".jpg"), rel = "thumbs/" + adId + ".jpg";
+    if (existsSync(file)) { imgMap[adId] = rel; continue; }
+    const cid = creativeOf[adId]; if (!cid) continue;
+    try {
+      const j = await (await fetch(`${API}/${cid}?fields=thumbnail_url&thumbnail_width=400&thumbnail_height=400&access_token=${TOKEN}`)).json();
+      if (!j.thumbnail_url) continue;
+      const ir = await fetch(j.thumbnail_url); if (!ir.ok) continue;
+      mkdirSync(THUMBDIR, { recursive: true });
+      writeFileSync(file, Buffer.from(await ir.arrayBuffer()));
+      imgMap[adId] = rel; baixadas++;
+    } catch { /* segue sem capa */ }
+  }
+  for (const p of PRESETS) for (const ad of periods[p].ads) if (imgMap[ad.id]) ad.img = imgMap[ad.id];
 
   const campaigns = [...usedCamps].filter(id => campById[id]).map(id => ({ id, name: campById[id].name, objective: campById[id].objective || "" }));
   const adsets = [...usedAdsets].map(id => ({ id, name: adsetName[id] || id }));

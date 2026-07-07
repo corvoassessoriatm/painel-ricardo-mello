@@ -230,6 +230,22 @@
   .bar-fill{background:linear-gradient(90deg,var(--accent-ink),var(--accent));}
   ::selection{background:var(--accent-wash);}
   .tbtn{border-radius:9px;}
+  /* galeria de criativos */
+  .gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(196px,1fr));gap:14px;padding:16px 20px 20px;}
+  .gcard{background:var(--surface-2);border:1px solid var(--border);border-radius:13px;overflow:hidden;transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease;}
+  .gcard:hover{transform:translateY(-3px);border-color:var(--border-2);box-shadow:var(--shadow);}
+  .gcard.best{border-color:var(--accent);}
+  .gthumb{position:relative;aspect-ratio:1/1;background:linear-gradient(135deg,var(--surface-2),var(--plane));overflow:hidden;}
+  .gthumb img{width:100%;height:100%;object-fit:cover;display:block;}
+  .gthumb .ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:40px;color:var(--accent-ink);background:radial-gradient(130% 130% at 28% 18%,var(--accent-wash),transparent 60%);}
+  .gbadges{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:flex-start;gap:6px;}
+  .gbadges .st{backdrop-filter:blur(4px);}
+  .gbody{padding:11px 13px 13px;}
+  .gname{font-family:var(--font-mono);font-size:11.5px;font-weight:600;letter-spacing:-.02em;line-height:1.28;word-break:break-word;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;min-height:30px;}
+  .gcity{font-size:10px;color:var(--muted);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .gmet{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;margin-top:11px;}
+  .gm .gk{font-size:8.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--muted);}
+  .gm .gv{font-family:var(--font-mono);font-size:13px;font-weight:600;letter-spacing:-.3px;}
 </style>
 </head>
 <body>
@@ -262,7 +278,7 @@ const PRIMARY={vendas:{key:"pu",label:"Compras",unit:"compras",micro:true},conte
 const BUCKETS=["vendas","conteudo","seguidores","leads","whatsapp","trafego"];
 const BKL={vendas:"Vendas",conteudo:"Conteúdo",seguidores:"Seguidores",leads:"Leads",whatsapp:"WhatsApp",trafego:"Tráfego"};
 
-let DATA=null,CMETA={},ADMAP={},state={action:"geral",product:"all",period:"last_30d",level:"campaign"};
+let DATA=null,CMETA={},ADMAP={},state={action:"geral",product:"all",period:"last_30d",level:"campaign",adView:"table"};
 
 function classify(cid){
   const c=CMETA[cid]||{name:cid,objective:""};
@@ -339,7 +355,7 @@ function render(){
       <div class="panel"><div class="phead"><div><h3>Gasto por ação</h3><div class="psub">Distribuição do investimento</div></div></div><div id="c1"></div></div>
       <div class="panel"><div class="phead"><div><h3>Resultados por objetivo</h3><div class="psub">Volume no período (escalas distintas)</div></div></div><div id="c2"></div></div>
     </div>`:""}
-    <div class="tblwrap"><div class="tblhead" style="justify-content:space-between;align-items:center"><div class="miniseg" id="levelseg" role="tablist" aria-label="Nível"></div><span class="sub" id="lvlsub"></span></div><div class="scroll"><table id="lvltbl"></table></div></div>
+    <div class="tblwrap"><div class="tblhead" style="justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap"><div class="miniseg" id="levelseg" role="tablist" aria-label="Nível"></div><span class="sub" id="lvlsub" style="flex:1 1 auto"></span><div class="miniseg" id="adviewseg"></div></div><div class="scroll" id="lvlscroll"><table id="lvltbl"></table></div><div id="gallery"></div></div>
     <div id="vidwrap"></div>
     ${notes()}`;
   renderSeg();syncProd();renderPeriod();
@@ -484,8 +500,24 @@ function sortRows(rows,st){
     if(k==="status")return st.d*((a._active?1:0)-(b._active?1:0));
     return st.d*(((a[k]==null?-1:a[k]))-((b[k]==null?-1:b[k])));});
 }
+function renderGallery(rows,best){
+  const g=document.getElementById("gallery");
+  g.innerHTML=`<div class="gal">${rows.map(c=>{
+    const ini=((c.name||"").replace(/[^A-Za-z0-9]/g,"").slice(0,1)||"◆").toUpperCase();
+    const img=c.img?`<img src="${c.img}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'ph',textContent:'${ini}'}))">`:`<div class="ph">${ini}</div>`;
+    const mk=c.objV>0?c.objLabel:(c.hook!=null?"Hook":"CPM"),mv=c.objV>0?NUM(c.objV):(c.hook!=null?PCT(c.hook):BRL(c.cpm));
+    return `<div class="gcard ${c===best?'best':''}">
+      <div class="gthumb">${img}<div class="gbadges"><span class="st ${c.status==='ACTIVE'?'on':'off'}">${c.status==='ACTIVE'?'ativo':'pausado'}</span>${c===best?'<span class="star">★</span>':''}</div></div>
+      <div class="gbody"><div class="gname">${c.name}</div><div class="gcity">${c.product}${c.cname?' · '+c.cname:''}</div>
+        <div class="gmet"><div class="gm"><div class="gk">Gasto</div><div class="gv">${BRL0(c.spend)}</div></div><div class="gm"><div class="gk">CTR</div><div class="gv">${PCT(c.ctr)}</div></div><div class="gm"><div class="gk">CPC</div><div class="gv">${BRL(c.cpc)}</div></div><div class="gm"><div class="gk">${mk}</div><div class="gv">${mv}</div></div></div>
+      </div></div>`;
+  }).join("")}</div>`;
+}
 function renderHier(cs){
   const t=document.getElementById("lvltbl"),sub=document.getElementById("lvlsub"),lvl=state.level,st=sortBy[lvl];
+  const av=document.getElementById("adviewseg");
+  if(lvl==="ad"){av.style.display="flex";av.innerHTML=[["table","Tabela"],["gallery","Galeria"]].map(([k,l])=>`<button aria-selected="${state.adView===k}" data-v="${k}">${l}</button>`).join("");av.querySelectorAll("button").forEach(b=>b.onclick=()=>{state.adView=b.dataset.v;renderHier(cs);});}
+  else av.style.display="none";
   const cols=[["name",lvl==="campaign"?"Campanha (nome completo)":lvl==="adset"?"Conjunto (nome completo)":"Anúncio"],["bucket","Ação"],["status","Status"],["spend","Gasto"],["reach","Alcance"],["cpm","CPM"],["ctr","CTR"],["cpc","CPC"]];
   if(lvl==="ad")cols.push(["hook","Hook"]);
   cols.push(["objV","Objetivo"]);
@@ -498,6 +530,13 @@ function renderHier(cs){
     best=useObj?rows.filter(c=>c.objV>0).slice().sort((a,b)=>(a.spend/a.objV)-(b.spend/b.objV))[0]:rows.slice().sort((a,b)=>b.ctr-a.ctr||b.spend-a.spend)[0];
     sub.textContent=rows.length+" anúncios · inclui pausados · ★ = "+(useObj?"maior impacto":"maior CTR c/ gasto");
   }
+  const scrollEl=document.getElementById("lvlscroll"),galEl=document.getElementById("gallery");
+  if(lvl==="ad"&&state.adView==="gallery"){
+    scrollEl.style.display="none";galEl.style.display="block";
+    if(!rows.length){galEl.innerHTML=`<div class="empty">Nenhum criativo neste filtro/período.</div>`;return;}
+    renderGallery(sortRows(rows,st),best);return;
+  }
+  scrollEl.style.display="";galEl.style.display="none";
   if(!rows.length){t.innerHTML=`<tbody><tr><td colspan="${cols.length}"><div class="empty">Nada neste filtro/período.</div></td></tr></tbody>`;return;}
   const body=sortRows(rows,st).map(r=>{
     let nameCell;
