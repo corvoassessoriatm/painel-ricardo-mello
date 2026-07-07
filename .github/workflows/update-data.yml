@@ -2,7 +2,10 @@ name: Atualizar dados Meta Ads
 
 on:
   schedule:
-    - cron: "0 * * * *"        # de hora em hora (UTC)
+    # 2x por hora, em minutos FORA do topo da hora (:00 é o mais congestionado
+    # no scheduler do GitHub e costuma ser atrasado ou pulado). :17 e :47 disparam
+    # de forma muito mais confiavel. UTC.
+    - cron: "17,47 * * * *"
   workflow_dispatch:            # botão "Run workflow" manual
 
 permissions:
