@@ -158,7 +158,7 @@ const PRIMARY={vendas:{key:"pu",label:"Compras",unit:"compras",micro:true},conte
 const BUCKETS=["vendas","conteudo","seguidores","leads","whatsapp","trafego"];
 const BKL={vendas:"Vendas",conteudo:"Conteúdo",seguidores:"Seguidores",leads:"Leads",whatsapp:"WhatsApp",trafego:"Tráfego"};
 
-let DATA=null,CMETA={},ADMAP={},state={action:"geral",product:"all",period:"last_30d"};
+let DATA=null,CMETA={},ADMAP={},state={action:"geral",product:"all",period:"last_30d",level:"campaign"};
 
 function classify(cid){
   const c=CMETA[cid]||{name:cid,objective:""};
@@ -198,7 +198,7 @@ function campaignsAgg(list){
 }
 function adsetsAgg(list){
   const m={};
-  list.forEach(a=>{const k=a.adset_id||"—";if(!m[k])m[k]={id:k,name:ADMAP[k]||("conjunto "+k),bucket:a.bucket,product:a.product,spend:0,impr:0,reach:0,clicks:0,objV:0,anyActive:false};
+  list.forEach(a=>{const k=a.adset_id||"—";if(!m[k])m[k]={id:k,name:ADMAP[k]||("conjunto "+k),cname:a.cname,bucket:a.bucket,product:a.product,spend:0,impr:0,reach:0,clicks:0,objV:0,anyActive:false};
     const c=m[k];c.spend+=a.spend;c.impr+=a.impr;c.reach+=a.reach;c.clicks+=a.clicks;c.objV+=a.objV;if(a.status==="ACTIVE")c.anyActive=true;});
   return Object.values(m).map(c=>({...c,ctr:c.impr?c.clicks/c.impr*100:0,cpc:c.clicks?c.spend/c.clicks:0,cpm:c.impr?c.spend/c.impr*1000:0,objLabel:PRIMARY[c.bucket].label})).sort((a,b)=>b.spend-a.spend);
 }
@@ -234,18 +234,15 @@ function render(){
       <div class="panel"><div class="phead"><div><h3>Gasto por ação</h3><div class="psub">Distribuição do investimento</div></div></div><div id="c1"></div></div>
       <div class="panel"><div class="phead"><div><h3>Resultados por objetivo</h3><div class="psub">Volume no período (escalas distintas)</div></div></div><div id="c2"></div></div>
     </div>`:""}
-    <div class="tblwrap"><div class="tblhead"><h3>Campanhas — nome completo</h3><span class="sub" id="campsub"></span></div><div class="scroll"><table id="ctbl"></table></div></div>
-    <div class="tblwrap"><div class="tblhead"><h3>Conjuntos (ad sets)</h3><span class="sub" id="assub"></span></div><div class="scroll"><table id="astbl"></table></div></div>
-    <div class="tblwrap"><div class="tblhead"><h3>Criativos ${state.action==="geral"?"":"· "+BKL[state.action]}</h3><span class="sub" id="crsub"></span></div><div class="scroll"><table id="crtbl"></table></div></div>
+    <div class="tblwrap"><div class="tblhead" style="justify-content:space-between;align-items:center"><div class="miniseg" id="levelseg" role="tablist" aria-label="Nível"></div><span class="sub" id="lvlsub"></span></div><div class="scroll"><table id="lvltbl"></table></div></div>
     <div id="vidwrap"></div>
     ${notes()}`;
   renderSeg();syncProd();renderPeriod();
   renderObj(t);renderKPIs(t);
   renderTrendSeg();renderTrend();
   if(state.action==="geral")renderOverviewCharts(A);
-  renderCampTable(camps);
-  renderAdsetTable(adsetsAgg(cs));
-  renderCrTable(cs);
+  renderLevelSeg(cs);
+  renderHier(cs);
   renderVideoTable(cs);
 }
 function renderSeg(){
@@ -336,55 +333,53 @@ function renderOverviewCharts(A){
   const rows=[{l:"ThruPlays",v:A.reduce((s,a)=>s+(a.bucket==="conteudo"?a.objV:0),0)},{l:"Visitas perfil",v:A.reduce((s,a)=>s+(a.bucket==="seguidores"?a.objV:0),0)},{l:"Cliques (evento)",v:A.reduce((s,a)=>s+((a.act&&a.act.lc)||0),0)},{l:"Checkouts",v:A.reduce((s,a)=>s+((a.act&&a.act.ck)||0),0)},{l:"Leads",v:A.reduce((s,a)=>s+a.leadN,0)},{l:"Compras",v:A.reduce((s,a)=>s+((a.act&&a.act.pu)||0),0)}].filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
   bars("c2",rows,NUM);
 }
-// campaigns table
-let cSort="spend",cDir=-1;
-function renderCampTable(camps){
-  const t=document.getElementById("ctbl");document.getElementById("campsub").textContent=camps.length+" campanhas · clique no cabeçalho p/ ordenar";
-  if(!camps.length){t.innerHTML=`<tbody><tr><td colspan="8"><div class="empty">Sem campanhas neste filtro/período.</div></td></tr></tbody>`;return;}
-  const cols=[["name","Campanha (nome completo)"],["bucket","Ação"],["spend","Gasto"],["reach","Alcance"],["cpm","CPM"],["ctr","CTR"],["cpc","CPC"],["objV","Objetivo"]];
-  const s=camps.slice().sort((a,b)=>{if(cSort==="name")return cDir*a.name.localeCompare(b.name);if(cSort==="bucket")return cDir*a.bucket.localeCompare(b.bucket);return cDir*((a[cSort]||0)-(b[cSort]||0));});
-  t.innerHTML=`<thead><tr>${cols.map(([k,l])=>`<th data-k="${k}" class="${cSort===k?"sorted":""}">${l}${cSort===k?(cDir<0?" ↓":" ↑"):""}</th>`).join("")}</tr></thead><tbody>${s.map(c=>`<tr>
-    <td><div class="cfull">${c.name}</div><span class="tag">${c.product}${c.anyActive?"":" · pausada"}</span></td>
-    <td><span class="bk">${BKL[c.bucket]}</span></td><td>${BRL(c.spend)}</td><td>${NUM(c.reach)}</td><td>${BRL(c.cpm)}</td><td>${PCT(c.ctr)}</td><td>${BRL(c.cpc)}</td>
-    <td>${c.objV>0?NUM(c.objV)+' <span class="tag">'+c.objLabel+'</span>':"—"}</td></tr>`).join("")}</tbody>`;
-  t.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(cSort===k)cDir*=-1;else{cSort=k;cDir=(k==="name"||k==="bucket")?1:-1;}renderCampTable(camps);});
+// ===== hierarquia estilo Gerenciador de Anúncios (abas: Campanhas / Conjuntos / Anúncios) =====
+const LEVELS=[["campaign","Campanhas"],["adset","Conjuntos"],["ad","Anúncios"]];
+const sortBy={campaign:{k:"spend",d:-1},adset:{k:"spend",d:-1},ad:{k:"spend",d:-1}};
+function renderLevelSeg(cs){
+  const counts={campaign:campaignsAgg(cs).length,adset:adsetsAgg(cs).length,ad:cs.length};
+  const el=document.getElementById("levelseg");
+  el.innerHTML=LEVELS.map(([k,l])=>`<button role="tab" aria-selected="${state.level===k}" data-l="${k}">${l} <span style="opacity:.65">${counts[k]}</span></button>`).join("");
+  el.querySelectorAll("button").forEach(b=>b.onclick=()=>{state.level=b.dataset.l;renderLevelSeg(cs);renderHier(cs);});
 }
-// adsets (conjuntos) table
-let aSort="spend",aDir=-1;
-function renderAdsetTable(rows){
-  const t=document.getElementById("astbl");document.getElementById("assub").textContent=rows.length+" conjuntos com gasto no período";
-  if(!rows.length){t.innerHTML=`<tbody><tr><td colspan="8"><div class="empty">Sem conjuntos neste filtro/período.</div></td></tr></tbody>`;return;}
-  const cols=[["name","Conjunto (nome completo)"],["bucket","Ação"],["spend","Gasto"],["reach","Alcance"],["cpm","CPM"],["ctr","CTR"],["cpc","CPC"],["objV","Objetivo"]];
-  const s=rows.slice().sort((a,b)=>{if(aSort==="name")return aDir*a.name.localeCompare(b.name);if(aSort==="bucket")return aDir*a.bucket.localeCompare(b.bucket);return aDir*((a[aSort]||0)-(b[aSort]||0));});
-  t.innerHTML=`<thead><tr>${cols.map(([k,l])=>`<th data-k="${k}" class="${aSort===k?"sorted":""}">${l}${aSort===k?(aDir<0?" ↓":" ↑"):""}</th>`).join("")}</tr></thead><tbody>${s.map(c=>`<tr>
-    <td><div class="cfull">${c.name}</div><span class="tag">${c.product}${c.anyActive?"":" · pausado"}</span></td>
-    <td><span class="bk">${BKL[c.bucket]}</span></td><td>${BRL(c.spend)}</td><td>${NUM(c.reach)}</td><td>${BRL(c.cpm)}</td><td>${PCT(c.ctr)}</td><td>${BRL(c.cpc)}</td>
-    <td>${c.objV>0?NUM(c.objV)+' <span class="tag">'+c.objLabel+'</span>':"—"}</td></tr>`).join("")}</tbody>`;
-  t.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(aSort===k)aDir*=-1;else{aSort=k;aDir=(k==="name"||k==="bucket")?1:-1;}renderAdsetTable(rows);});
+function sortRows(rows,st){
+  return rows.slice().sort((a,b)=>{const k=st.k;
+    if(k==="name")return st.d*String(a.name).localeCompare(String(b.name));
+    if(k==="bucket")return st.d*a.bucket.localeCompare(b.bucket);
+    if(k==="status")return st.d*((a._active?1:0)-(b._active?1:0));
+    return st.d*(((a[k]==null?-1:a[k]))-((b[k]==null?-1:b[k])));});
 }
-// creatives table (inclui pausados, no topo os desativados)
-let rSort="status",rDir=1;
-function renderCrTable(list){
-  const t=document.getElementById("crtbl"),sub=document.getElementById("crsub");
-  if(!list.length){sub.textContent="";t.innerHTML=`<tbody><tr><td colspan="8"><div class="empty">Nenhum criativo neste filtro/período.</div></td></tr></tbody>`;return;}
-  const anyObj=list.some(c=>c.objV>0),micro=state.action!=="geral"&&PRIMARY[state.action]?.micro;
-  const useObj=anyObj&&!micro;
-  const best=useObj?list.filter(c=>c.objV>0).slice().sort((a,b)=>(a.spend/a.objV)-(b.spend/b.objV))[0]:list.slice().sort((a,b)=>b.ctr-a.ctr||b.spend-a.spend)[0];
-  sub.textContent="inclui pausados · ★ = "+(useObj?"maior impacto no objetivo":"maior CTR c/ gasto")+" · clique p/ ordenar";
-  const objHdr=state.action==="geral"?"Resultado":(useObj?PRIMARY[state.action].label:"CTR");
-  const cols=[["cname","Criativo"],["status","Status"],["spend","Gasto"],["ctr","CTR"],["cpc","CPC"],["cpm","CPM"],["hook","Hook"],["objV",objHdr]];
-  // sort: default status (pausados no topo), depois por gasto
-  const s=list.slice().sort((a,b)=>{
-    if(rSort==="status"){const av=a.status==="ACTIVE"?1:0,bv=b.status==="ACTIVE"?1:0;if(av!==bv)return av-bv;return b.spend-a.spend;}
-    if(rSort==="cname")return rDir*a.name.localeCompare(b.name);
-    return rDir*(((a[rSort]==null?-1:a[rSort]))-((b[rSort]==null?-1:b[rSort])));});
-  t.innerHTML=`<thead><tr>${cols.map(([k,l])=>`<th data-k="${k}" class="${rSort===k?"sorted":""}">${l}${rSort===k?(rDir<0?" ↓":" ↑"):""}</th>`).join("")}</tr></thead><tbody>${s.map(c=>{
-    const isB=c===best;const oc=c.objV>0?`${NUM(c.objV)} <span class="tag">${c.objLabel}</span>`:(state.action!=="geral"&&!useObj?PCT(c.ctr):(c.fo?NUM(c.fo)+' <span class="tag">seg.</span>':"—"));
-    return `<tr class="${isB?"best":""}"><td><div class="crn">${isB?'<span class="star">★</span>':""}${c.name}</div><span class="tag">${c.product}${c.fo?" · "+c.fo+" seg.":""}</span></td>
-      <td><span class="st ${c.status==="ACTIVE"?"on":"off"}">${c.status==="ACTIVE"?"ativo":"pausado"}</span></td>
-      <td>${BRL(c.spend)}</td><td>${PCT(c.ctr)}</td><td>${BRL(c.cpc)}</td><td>${BRL(c.cpm)}</td>
-      <td>${c.hook!=null?PCT(c.hook):"—"}</td><td>${oc}</td></tr>`;}).join("")}</tbody>`;
-  t.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(rSort===k)rDir*=-1;else{rSort=k;rDir=(k==="cname")?1:-1;}renderCrTable(list);});
+function renderHier(cs){
+  const t=document.getElementById("lvltbl"),sub=document.getElementById("lvlsub"),lvl=state.level,st=sortBy[lvl];
+  const cols=[["name",lvl==="campaign"?"Campanha (nome completo)":lvl==="adset"?"Conjunto (nome completo)":"Anúncio"],["bucket","Ação"],["status","Status"],["spend","Gasto"],["reach","Alcance"],["cpm","CPM"],["ctr","CTR"],["cpc","CPC"]];
+  if(lvl==="ad")cols.push(["hook","Hook"]);
+  cols.push(["objV","Objetivo"]);
+  let rows, best=null;
+  if(lvl==="campaign"){ rows=campaignsAgg(cs).map(c=>({...c,_active:c.anyActive})); sub.textContent=rows.length+" campanhas · clique no cabeçalho p/ ordenar"; }
+  else if(lvl==="adset"){ rows=adsetsAgg(cs).map(c=>({...c,_active:c.anyActive})); sub.textContent=rows.length+" conjuntos · clique p/ ordenar"; }
+  else {
+    rows=cs.map(a=>({...a,_active:a.status==="ACTIVE"}));
+    const anyObj=rows.some(c=>c.objV>0),micro=state.action!=="geral"&&PRIMARY[state.action]?.micro,useObj=anyObj&&!micro;
+    best=useObj?rows.filter(c=>c.objV>0).slice().sort((a,b)=>(a.spend/a.objV)-(b.spend/b.objV))[0]:rows.slice().sort((a,b)=>b.ctr-a.ctr||b.spend-a.spend)[0];
+    sub.textContent=rows.length+" anúncios · inclui pausados · ★ = "+(useObj?"maior impacto":"maior CTR c/ gasto");
+  }
+  if(!rows.length){t.innerHTML=`<tbody><tr><td colspan="${cols.length}"><div class="empty">Nada neste filtro/período.</div></td></tr></tbody>`;return;}
+  const body=sortRows(rows,st).map(r=>{
+    let nameCell;
+    if(lvl==="campaign") nameCell=`<div class="cfull">${r.name}</div><span class="tag">${r.product}</span>`;
+    else if(lvl==="adset") nameCell=`<div class="cfull">${r.name}</div><span class="tag">${r.product}${r.cname?" · "+r.cname:""}</span>`;
+    else nameCell=`<div class="crn">${r===best?'<span class="star">★</span>':""}${r.name}</div><span class="tag">${(ADMAP[r.adset_id]||"—")} · ${r.cname||""}</span>`;
+    const objCell = r.objV>0 ? NUM(r.objV)+' <span class="tag">'+r.objLabel+'</span>' : (lvl==="ad"&&r.fo?NUM(r.fo)+' <span class="tag">seg.</span>':"—");
+    return `<tr class="${r===best?"best":""}">
+      <td>${nameCell}</td>
+      <td><span class="bk">${BKL[r.bucket]}</span></td>
+      <td><span class="st ${r._active?"on":"off"}">${r._active?"ativo":"pausado"}</span></td>
+      <td>${BRL(r.spend)}</td><td>${NUM(r.reach)}</td><td>${BRL(r.cpm)}</td><td>${PCT(r.ctr)}</td><td>${BRL(r.cpc)}</td>
+      ${lvl==="ad"?`<td>${r.hook!=null?PCT(r.hook):"—"}</td>`:""}
+      <td>${objCell}</td></tr>`;
+  }).join("");
+  t.innerHTML=`<thead><tr>${cols.map(([k,l])=>`<th data-k="${k}" class="${st.k===k?"sorted":""}">${l}${st.k===k?(st.d<0?" ↓":" ↑"):""}</th>`).join("")}</tr></thead><tbody>${body}</tbody>`;
+  t.querySelectorAll("th").forEach(th=>th.onclick=()=>{const k=th.dataset.k;if(st.k===k)st.d*=-1;else{st.k=k;st.d=(k==="name"||k==="bucket")?1:-1;}renderHier(cs);});
 }
 // video retention table
 function renderVideoTable(list){
