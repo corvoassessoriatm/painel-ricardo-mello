@@ -365,14 +365,13 @@ function renderFunnel(A,cs){
     <div class="funnel">
       ${stage("Alcance",t.reach)}
       ${ann(`CPM <b>${BRL(cpm)}</b> · CTR <b>${PCT(ctr)}</b> · CPC <b>${BRL(cpc)}</b>`)}
-      ${stage("Cliques no link",t.lc,`${PCT(pctPrev(t.lc,t.impr))} das impressões`)}
+      ${stage("Cliques no link",t.lc)}
       ${ann(`Connect rate (Page view ÷ cliques) <b>${PCT(connect)}</b>`)}
-      ${stage("Page view",t.pv,t.lc?PCT(pctPrev(t.pv,t.lc))+" dos cliques":"")}
-      ${stage("Checkout",t.ck,t.pv?PCT(pctPrev(t.ck,t.pv))+" das PV":"")}
-      ${stage("Lead",t.le,t.clicks?PCT(pctPrev(t.le,t.clicks))+" dos cliques":"")}
-      ${stage("Compra",t.pu,t.pu?BRL(t.spend/t.pu)+" / compra":"sem compra atribuída")}
+      ${stage("Page view",t.pv)}
+      ${stage("Checkout",t.ck)}
+      ${stage("Lead",t.le)}
+      ${stage("Compra",t.pu)}
     </div>
-    <div class="psub" style="margin-top:8px">Page view depende do evento de <b>LP no pixel</b> (hoje sub-registrado) — por isso pode aparecer abaixo de Checkout. Vendas faturadas reais virão do RD Station.</div>
   </div>`;
 }
 // ===== hierarquia estilo Gerenciador de Anúncios (abas: Campanhas / Conjuntos / Anúncios) =====
