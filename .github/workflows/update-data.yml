@@ -1,23 +1,32 @@
 name: Atualizar dados Meta Ads
 
+# ESTRATEGIA DE AGENDAMENTO CONFIAVEL (nao depende do cron do GitHub)
+# --------------------------------------------------------------------
+# O scheduler de cron gratuito do GitHub e nao-confiavel: engole/atrasa
+# agendamentos por horas. Ja o gatilho workflow_dispatch dispara na hora,
+# sempre. Entao esta execucao roda um LOOP (atualiza de ~1h em ~1h por ~5h)
+# e, no fim, RE-DISPARA a si mesma via `gh workflow run` -> corrente
+# auto-sustentavel que nao depende do cron.
+# O `schedule` fica so como REDE DE SEGURANCA, caso a corrente morra.
+# `cancel-in-progress: true` garante sempre no maximo UMA corrente (auto-cura).
+
 on:
   schedule:
-    # 2x por hora, em minutos FORA do topo da hora (:00 é o mais congestionado
-    # no scheduler do GitHub e costuma ser atrasado ou pulado). :17 e :47 disparam
-    # de forma muito mais confiavel. UTC.
-    - cron: "17,47 * * * *"
-  workflow_dispatch:            # botão "Run workflow" manual
+    - cron: "17,47 * * * *"     # backup: reergue a corrente se ela cair (best-effort)
+  workflow_dispatch:            # gatilho confiavel: usado pela propria corrente e manualmente
 
 permissions:
   contents: write
+  actions: write                # necessario p/ a corrente re-disparar a si mesma
 
 concurrency:
   group: update-data
-  cancel-in-progress: false
+  cancel-in-progress: true      # sempre no maximo UMA corrente ativa
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    timeout-minutes: 350        # ~5h50 (< limite de 6h do runner); no fim re-arma
     steps:
       - uses: actions/checkout@v4
 
@@ -25,20 +34,43 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Puxar Meta Ads e gerar data.json
+      - name: Loop de atualizacao (a cada ~55 min, por ~4h40)
         env:
           META_TOKEN: ${{ secrets.META_TOKEN }}
           AD_ACCOUNT_ID: ${{ secrets.AD_ACCOUNT_ID }}
-        run: node scripts/fetch-meta.mjs
-
-      - name: Commit se houver mudança
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data.json thumbs 2>/dev/null || git add data.json
-          if [ -n "$(git status --porcelain)" ]; then
-            git commit -m "chore: atualiza data.json + capas ($(date -u '+%Y-%m-%d %H:%M UTC'))"
-            git push
-          else
-            echo "Sem mudança nos dados."
-          fi
+          for i in $(seq 1 6); do
+            echo "::group::Iteracao $i - $(date -u '+%Y-%m-%d %H:%M UTC')"
+            git fetch origin main -q
+            git reset --hard origin/main -q            # parte do estado remoto (sem conflitos)
+            # fetch NAO-fatal: se a API da Meta falhar/limitar nesta iteracao,
+            # o job continua (nao entra em loop apertado de re-disparo).
+            node scripts/fetch-meta.mjs || echo "AVISO: fetch-meta falhou nesta iteracao (segue)"
+            git add data.json thumbs 2>/dev/null || git add data.json
+            if [ -n "$(git status --porcelain)" ]; then
+              git commit -q -m "chore: atualiza data.json + capas ($(date -u '+%Y-%m-%d %H:%M UTC'))"
+              git push -q || echo "AVISO: push falhou (proxima iteracao reseta e tenta de novo)"
+            else
+              echo "Sem mudanca nos dados."
+            fi
+            echo "::endgroup::"
+            [ "$i" -lt 6 ] && sleep 3300 || true       # ~55 min entre iteracoes
+          done
+
+      - name: Re-armar a corrente (dispara a proxima execucao)
+        # success() (NAO always): um re-disparo em execucao CANCELADA causaria
+        # tempestade de cancel/redispatch com cancel-in-progress:true. Como o
+        # fetch acima e nao-fatal, o loop praticamente sempre conclui com sucesso.
+        # Se algum dia a corrente cair mesmo assim, o `schedule` (backup) a reergue.
+        if: success()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sleep 15
+          for t in 1 2 3; do
+            gh workflow run update-data.yml -R "${{ github.repository }}" --ref main && exit 0
+            echo "re-disparo falhou (tentativa $t), aguardando..."; sleep 20
+          done
+          echo "ERRO: nao consegui re-armar a corrente; o schedule de backup assume."
